@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.mapper.LabelMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.server.entity.Label">
+        <!--@mbg.generated-->
+        <!--@Table tb_label-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="op_id" jdbcType="BIGINT" property="opCode"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="weight" jdbcType="INTEGER" property="weight"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, `label`, op_code, code, weight, imageUrl, create_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from tb_label
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from sys_label
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jmu.server.entity.Label"
+            useGeneratedKeys="true">
+        insert into sys_label (`label`,imageUrl,op_code, code,state,
+        weight, create_time)
+        values (#{label,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{opCode,jdbcType=VARCHAR},
+        #{code,jdbcType=VARCHAR},
+        #{state,jdbcType=TINYINT},#{weight,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jmu.server.entity.Label"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into tb_label
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="label != null">
+                `label`,
+            </if>
+            <if test="opCode != null">
+                op_code,
+            </if>
+            <if test="code != null">
+                code,
+            </if>
+            <if test="weight != null">
+                weight,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="label != null">
+                #{label,jdbcType=VARCHAR},
+            </if>
+            <if test="opCode != null">
+                #{opCode,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="weight != null">
+                #{weight,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jmu.server.entity.Label">
+        <!--@mbg.generated-->
+        update sys_label
+        <set>
+            <if test="label != null">
+                `label` = #{label,jdbcType=VARCHAR},
+            </if>
+            <if test="opCode != null">
+                op_code = #{opCode,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="weight != null">
+                weight = #{weight,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jmu.server.entity.Label">
+        <!--@mbg.generated-->
+        update tb_label
+        set `label` = #{label,jdbcType=VARCHAR},
+        op_id = #{opCode,jdbcType=VARCHAR},
+        code = #{code,jdbcType=VARCHAR},
+        weight = #{weight,jdbcType=INTEGER},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="listLabel" resultType="com.jmu.server.vo.LabelVO">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_label
+        where state = 0
+    </select>
+</mapper>

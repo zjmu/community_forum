@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.module.articleLabel.mapper.ArticleLabelExtMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.ArticleLabel">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="label_id" jdbcType="BIGINT" property="labelId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <!--文章内容映射-->
+    <resultMap id="ArticleMap" type="com.jmu.client.vo.ArticleVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="icon" property="icon"/>
+        <result column="signature" property="signature"/>
+        <result column="nick" property="nick"/>
+        <result column="userId" property="userId"/>
+        <result column="favorite_id" property="favoriteId"/>
+        <result column="like_id" property="likeId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="view_num" jdbcType="BIGINT" property="viewNum"/>
+        <result column="favory_num" jdbcType="BIGINT" property="favorityNum"/>
+        <result column="like_num" jdbcType="BIGINT" property="likeNum"/>
+        <result column="share_num" jdbcType="BIGINT" property="shareNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="content" property="content"/>
+        <collection property="articleExts" ofType="com.jmu.client.vo.ArticleExtVO" column="id"
+                    select="com.jmu.client.module.article.mapper.ArticleExtExtMapper.listByArticleId"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, article_id, label_id, create_time, modify_time
+    </sql>
+
+    <sql id="articleVO_List">
+        us.icon as icon, us.signature as signature, us.nickname as nick, info.id as id, info.user_id as userId, fa.id as
+        favorite_id,
+        info.title, info.view_num , info.favory_num, info.like_num, info.share_num,info.create_time, cont.content, li.id
+        as like_id
+    </sql>
+
+    <insert id="insertArticleLabels" parameterType="java.util.List">
+        insert into tb_article_label (article_id, label_id, create_time)
+        values
+        <foreach collection="articleLabels" item="item" index="index" separator=",">
+            (
+            #{item.articleId,jdbcType=BIGINT}, #{item.labelId,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+
+    <select id="listArticleOfLabel" resultMap="ArticleMap">
+        select
+        <include refid="articleVO_List"></include>
+        from tb_article_info info
+        left join tb_article_content cont on info.id = cont.article_id
+        left join tb_user us on info.user_id = us.id
+        left join tb_article_label al on info.id = al.article_id
+        left join
+        (SELECT id,article_id
+        FROM tb_favorite
+        WHERE user_id = #{userId}
+        ) fa on info.id = fa.article_id
+        left join
+        (SELECT id,article_id
+        FROM tb_like
+        WHERE user_id = #{userId}
+        ) li on info.id = li.article_id
+        where info.state = 0
+        and al.label_id = #{labelId}
+        order by info.create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.module.room.mapper.UserRoomMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.UserRoom">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="room_id" jdbcType="BIGINT" property="roomId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="userRoomMap" type="com.jmu.client.dto.UserRoomDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="result" jdbcType="TINYINT" property="result"/>
+        <result column="op_name" jdbcType="VARCHAR" property="opName"/>
+        <result column="op_code" jdbcType="VARCHAR" property="opCode"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <association property="user" javaType="com.jmu.client.entity.User">
+            <id column="user_id" jdbcType="BIGINT" property="id"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        </association>
+        <association property="room" javaType="com.jmu.client.entity.Room">
+            <id column="room_id" jdbcType="BIGINT" property="id"/>
+            <result column="room_code" jdbcType="VARCHAR" property="roomCode"/>
+            <result column="area" jdbcType="VARCHAR" property="area"/>
+            <result column="building" jdbcType="VARCHAR" property="building"/>
+            <result column="unit" jdbcType="VARCHAR" property="unit"/>
+            <result column="floor" jdbcType="VARCHAR" property="floor"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="roomCheckMap" type="com.jmu.client.dto.UserRoomDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <association property="user" javaType="com.jmu.client.entity.User">
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        </association>
+        <association property="room" javaType="com.jmu.client.entity.Room">
+            <result column="room_code" jdbcType="VARCHAR" property="roomCode"/>
+            <result column="area" jdbcType="VARCHAR" property="area"/>
+            <result column="building" jdbcType="VARCHAR" property="building"/>
+            <result column="unit" jdbcType="VARCHAR" property="unit"/>
+            <result column="floor" jdbcType="VARCHAR" property="floor"/>
+        </association>
+        <collection property="roomChecks" column="id"
+                    select="com.jmu.client.module.room.mapper.RoomCheckMapperExt.listRoomCheckById"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, room_id, user_id, create_time
+    </sql>
+    <sql id="Room_Check_List">
+        sur.id, tu.id as user_id, tu.name, tu.phone, sur.status, sur.result, sur.op_name, sur.op_code, sur.create_time
+    </sql>
+    <sql id="Room_Check_Detail">
+        sur.id as id, sr.area, sr.building, sr.unit, sr.floor, sr.room_code, tu.name, tu.phone
+    </sql>
+
+    <select id="getCountOfbind" resultType="Integer">
+        select count(*)
+        from sys_user_room
+        where user_id = #{userId}
+        and status = 0
+        or user_id = #{userId}
+        and status = 1
+        and result = 1
+    </select>
+
+    <select id="listRoomCheck" resultMap="userRoomMap">
+        select
+        <include refid="Room_Check_List"/>
+        from sys_user_room sur
+        left join tb_user tu on sur.user_id = tu.id
+        <where>
+            1 = 1
+            <if test="opCode!= null">
+                and sur.op_code like '%' #{opCode} '%'
+            </if>
+            <if test="result!= null">
+                and sur.result = #{result}
+            </if>
+            <if test=" status!= null">
+                and sur.status = #{status}
+            </if>
+            <if test=" startTime!= null and endTime != null ">
+                and sur.create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="getRoomCheck" resultMap="roomCheckMap">
+        select
+        <include refid="Room_Check_Detail"/>
+        from sys_user_room sur
+        left join tb_user tu on sur.user_id = tu.id
+        left join sys_room sr on sur.room_id = sr.id
+        where sur.id = #{id}
+    </select>
+
+</mapper>

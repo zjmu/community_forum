@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.module.reason.mapper.ReasonMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.Reason">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
+        <result column="fraction" jdbcType="TINYINT" property="fraction"/>
+        <result column="op_id" jdbcType="BIGINT" property="opId"/>
+        <result column="op_code" jdbcType="VARCHAR" property="opCode"/>
+        <result column="op_time" jdbcType="TIMESTAMP" property="opTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <resultMap id="ReasonVOMap" type="com.jmu.client.vo.ReasonVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="reason" jdbcType="VARCHAR" property="content"/>
+        <result column="fraction" jdbcType="TINYINT" property="score"/>
+        <result column="name" jdbcType="BIGINT" property="opName"/>
+        <result column="manager_code" jdbcType="VARCHAR" property="opCode"/>
+        <result column="op_time" jdbcType="TIMESTAMP" property="opTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, reason, fraction, op_id, op_code, op_time
+    </sql>
+    <sql id="My_List">
+        r.id as id, reason, fraction, m.name, m.manager_code, op_time
+    </sql>
+
+    <select id="selectReason" resultMap="BaseResultMap">
+        select
+        id, reason, fraction
+        from sys_reason
+    </select>
+
+    <select id="listReson" resultMap="ReasonVOMap">
+        select
+        <include refid="My_List"/>
+        from sys_reason r
+        left join sys_manager m
+        on r.op_id = m.id
+        <where>
+            1=1
+            <if test="opCode!= null">
+                and op_code like '%' #{opCode} '%'
+            </if>
+            <if test="score!= null">
+                and `fraction` <![CDATA[ < ]]>  #{score}
+            </if>
+            <if test="startTime!= null and endTime!= null">
+                and op_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+</mapper>

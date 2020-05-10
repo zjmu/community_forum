@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.module.article.mapper.ArticleInfoExtMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.server.entity.ArticleInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="article_code" jdbcType="VARCHAR" property="articleCode"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="view_num" jdbcType="BIGINT" property="viewNum"/>
+        <result column="favory_num" jdbcType="BIGINT" property="favoryNum"/>
+        <result column="like_num" jdbcType="BIGINT" property="likeNum"/>
+        <result column="share_num" jdbcType="BIGINT" property="shareNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <resultMap id="ArticleMap" type="com.jmu.server.vo.ArticleVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="icon" property="icon"/>
+        <result column="signature" property="signature"/>
+        <result column="nick" property="nick"/>
+        <result column="userId" property="userId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="view_num" jdbcType="BIGINT" property="viewNum"/>
+        <result column="favory_num" jdbcType="BIGINT" property="favorityNum"/>
+        <result column="like_num" jdbcType="BIGINT" property="likeNum"/>
+        <result column="share_num" jdbcType="BIGINT" property="shareNum"/>
+        <result column="favorite_id" property="favoriteId"/>
+        <result column="like_id" property="likeId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="content" property="content"/>
+        <collection property="articleExts" ofType="com.jmu.server.vo.ArticleExtVO" column="id"
+                    select="com.jmu.server.module.article.mapper.ArticleExtExtMapper.listByArticleId"/>
+    </resultMap>
+
+
+    <sql id="articleVO_List">
+        us.icon as icon, us.signature as signature, us.nickname as nick, info.id as id, info.user_id as userId, fa.id as
+        favorite_id,
+        info.title, info.create_time, cont.content, li.id as like_id
+    </sql>
+
+    <sql id="myArticleVO_List">
+        us.icon as icon, us.signature as signature, us.nickname as nick, info.id as id, info.user_id as userId,
+        info.title, info.view_num , info.favory_num, info.like_num,info.create_time, cont.content
+    </sql>
+
+    <select id="listArticleByUserId" resultMap="ArticleMap">
+        select
+        <include refid="myArticleVO_List"></include>
+        from tb_article_info info
+        left join tb_article_content cont on info.id = cont.article_id
+        left join tb_user us on info.user_id = us.id
+        where info.state = 0
+        and info.user_id = #{userId}
+    </select>
+
+    <select id="listArticlePage" resultMap="ArticleMap">
+        select
+        <include refid="articleVO_List"></include>
+        from tb_article_info info
+        left join tb_article_content cont on info.id = cont.article_id
+        left join tb_user us on info.user_id = us.id
+        left join
+        (SELECT id,article_id
+        FROM tb_favorite
+        WHERE user_id = #{userId}
+        ) fa on info.id = fa.article_id
+        left join
+        (SELECT id,article_id
+        FROM tb_like
+        WHERE user_id = #{userId}
+        ) li on info.id = li.article_id
+        where info.state = 0
+        order by info.create_time desc
+    </select>
+
+    <select id="getArticleNum" resultType="java.lang.Integer">
+        select count(*)
+        from tb_article_info
+        where user_id = #{userId}
+        and state = 0
+    </select>
+
+    <update id="addArticleView">
+        update tb_article_info
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="view_num =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item} then view_num + 1
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item,jdbcType=BIGINT}
+        </foreach>
+    </update>
+</mapper>

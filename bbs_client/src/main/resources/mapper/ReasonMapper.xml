@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.mapper.ReasonMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.Reason">
+        <!--@mbg.generated-->
+        <!--@Table sys_reason-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="reason" jdbcType="VARCHAR" property="reason"/>
+        <result column="fraction" jdbcType="VARCHAR" property="fraction"/>
+        <result column="op_id" jdbcType="BIGINT" property="opId"/>
+        <result column="op_code" jdbcType="VARCHAR" property="opCode"/>
+        <result column="op_time" jdbcType="TIMESTAMP" property="opTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, reason, fraction, op_id, op_code, op_time, modify_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from sys_reason
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from sys_reason
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jmu.client.entity.Reason"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into sys_reason (reason, fraction, op_id,
+        op_code, op_time
+        )
+        values (#{reason,jdbcType=VARCHAR}, #{fraction,jdbcType=TINYINT}, #{opId,jdbcType=BIGINT},
+        #{opCode,jdbcType=VARCHAR}, #{opTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.jmu.client.entity.Reason"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into sys_reason
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reason != null">
+                reason,
+            </if>
+            <if test="fraction != null">
+                fraction,
+            </if>
+            <if test="opId != null">
+                op_id,
+            </if>
+            <if test="opCode != null">
+                op_code,
+            </if>
+            <if test="opTime != null">
+                op_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reason != null">
+                #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="fraction != null">
+                #{fraction,jdbcType=VARCHAR},
+            </if>
+            <if test="opId != null">
+                #{opId,jdbcType=BIGINT},
+            </if>
+            <if test="opCode != null">
+                #{opCode,jdbcType=VARCHAR},
+            </if>
+            <if test="opTime != null">
+                #{opTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jmu.client.entity.Reason">
+        <!--@mbg.generated-->
+        update sys_reason
+        <set>
+            <if test="reason != null">
+                reason = #{reason,jdbcType=VARCHAR},
+            </if>
+            <if test="fraction != null">
+                fraction = #{fraction,jdbcType=VARCHAR},
+            </if>
+            <if test="opId != null">
+                op_id = #{opId,jdbcType=BIGINT},
+            </if>
+            <if test="opCode != null">
+                op_code = #{opCode,jdbcType=VARCHAR},
+            </if>
+            <if test="opTime != null">
+                op_time = #{opTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jmu.client.entity.Reason">
+        update sys_reason
+        set reason = #{reason,jdbcType=VARCHAR},
+        fraction = #{fraction,jdbcType=TINYINT},
+        op_id = #{opId,jdbcType=BIGINT},
+        op_code = #{opCode,jdbcType=VARCHAR},
+        op_time = #{opTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

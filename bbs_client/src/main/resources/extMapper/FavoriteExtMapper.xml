@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.module.favority.mapper.FavoriteExtMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.Favorite">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <resultMap id="ArticleMap" type="com.jmu.client.vo.ArticleVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="icon" property="icon"/>
+        <result column="signature" property="signature"/>
+        <result column="nick" property="nick"/>
+        <result column="userId" property="userId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="view_num" jdbcType="BIGINT" property="viewNum"/>
+        <result column="favory_num" jdbcType="BIGINT" property="favorityNum"/>
+        <result column="like_num" jdbcType="BIGINT" property="likeNum"/>
+        <result column="share_num" jdbcType="BIGINT" property="shareNum"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="content" property="content"/>
+        <collection property="articleExts" ofType="com.jmu.client.vo.ArticleExtVO" column="id"
+                    select="com.jmu.client.module.article.mapper.ArticleExtExtMapper.listByArticleId"/>
+    </resultMap>
+
+    <sql id="articleVO_List">
+        us.icon as icon, us.signature as signature, us.nickname as nick, info.id as id, info.user_id as userId,
+        info.title, info.view_num , info.favory_num, info.like_num, info.share_num,info.create_time, cont.content
+    </sql>
+
+    <select id="selectFavoriteOfUser" resultType="java.lang.Long">
+        select id
+        from tb_favorite
+        where article_id = #{articleId}
+        and user_id = #{userId}
+    </select>
+
+    <select id="getFavoriteNum" resultType="java.lang.Integer">
+        select count(*)
+        from tb_favorite tf
+        left join tb_article_info tai on tf.article_id = tai.id
+        where tf.user_id = #{userId}
+        and tai.state = 0
+    </select>
+
+
+</mapper>

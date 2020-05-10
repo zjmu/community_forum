@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.module.user.mapper.UserMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.server.dto.UserDTO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="signature" jdbcType="VARCHAR" property="signature"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nick"/>
+        <result column="age" jdbcType="TINYINT" property="age"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="sex" jdbcType="BIT" property="sex"/>
+        <result column="credibility" jdbcType="INTEGER" property="credibility"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="create_time" jdbcType="TINYINT" property="createTime"/>
+        <association property="roomDTO" javaType="com.jmu.server.dto.RoomDTO">
+            <result column="area" property="area"/>
+            <result column="building" property="building"/>
+            <result column="unit" property="unit"/>
+            <result column="floor" property="floor"/>
+            <result column="room_code" property="roomCode"/>
+            <result column="result" property="result"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="UserForManagerVO" type="com.jmu.server.vo.UserForManagerVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="signature" jdbcType="VARCHAR" property="signature"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="age" jdbcType="TINYINT" property="age"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="credibility" jdbcType="TINYINT" property="credibility"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, username, `password`, `type`, `name`, icon, signature, nickname, age, sex, phone,
+        credibility, email, `state`, create_time
+    </sql>
+
+    <sql id="UserVO_List">
+        tu.id, tu.icon, tu.credibility, signature, nickname, phone, sr.area, sr.building, sr.unit, sr.floor,
+        sr.room_code, sur.result,tu.age,tu.sex,tu.name,tu.email,tu.create_time
+    </sql>
+
+    <update id="addCredibility">
+        update tb_user
+        set credibility = credibility + 1
+        where credibility <![CDATA[ < ]]> 100
+    </update>
+
+    <select id="listAllUser" resultMap="UserForManagerVO">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_user
+    </select>
+
+    <select id="getBySelect" parameterType="java.util.HashMap" resultMap="UserForManagerVO">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_user
+        <where>
+            1=1
+            <if test="name!= null">
+                and name like '%' #{name} '%'
+            </if>
+            <if test="icon!= null">
+                and icon = #{icon}
+            </if>
+            <if test=" signature!= null">
+                and signature like '%' #{signature} '%'
+            </if>
+            <if test=" nickName!= null">
+                and nickname = '%' #{nickName} '%'
+            </if>
+            <if test=" phone!= null">
+                and phone like #{phone} '%'
+            </if>
+            <if test=" credibility!= null">
+                and credibility = #{credibility}
+            </if>
+            <if test=" email!= null">
+                and email like '%'#{email} '%'
+            </if>
+            <if test=" state!= null">
+                and state = #{state}
+            </if>
+            <if test="startTime!= null and endTime!= null">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUser" resultMap="BaseResultMap">
+        select
+        <include refid="UserVO_List"/>
+        from tb_user tu
+        left join
+        (
+        select room_id, user_id, result
+        from sys_user_room
+        where result = 1
+        )sur
+        on tu.id = sur.user_id
+        left join sys_room sr
+        on sur.room_id = sr.id
+        where tu.open_id = #{openId}
+    </select>
+
+    <select id="getUserOfRoom" resultMap="BaseResultMap">
+        select
+        <include refid="UserVO_List"/>
+        from tb_user tu
+        left join sys_user_room sur
+        on tu.id = sur.user_id
+        left join sys_room sr
+        on sur.room_id = sr.id
+        <where>
+            1=1
+            and sur.result = 1
+            <if test="area!= null">
+                and sr.area = #{area}
+            </if>
+            <if test="building!= null">
+                and sr.building = #{building}
+            </if>
+            <if test="unit!= null">
+                and sr.unit = #{unit}
+            </if>
+            <if test="floor!= null">
+                and sr.floor = #{floor}
+            </if>
+            <if test="roomCode!= null">
+                and sr.room_code = #{roomCode}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUserByOpenId" resultType="Long">
+        select id
+        from tb_user
+        where open_id = #{openId}
+    </select>
+
+    <select id="listSameAreaUser" resultMap="BaseResultMap">
+        select
+        <include refid="UserVO_List"/>
+        from tb_user tu
+        left join sys_user_room sur
+        on tu.id = sur.user_id
+        left join sys_room sr
+        on sur.room_id = sr.id
+        where sur.result = 1
+        and sr.area = #{area}
+        and sr.building = #{building}
+        and sr.unit = #{unit}
+        and sr.floor = #{floor}
+        and sr.room_code = #{roomCode}
+    </select>
+
+    <select id="getRoomInfoOfUser" resultType="com.jmu.server.dto.RoomDTO">
+        select
+        sr.area, sr.building, sr.unit, sr.floor
+        from tb_user tu
+        left join
+        (
+        select room_id, user_id, result
+        from sys_user_room
+        where result = 1
+        )sur
+        on tu.id = sur.user_id
+        left join sys_room sr
+        on sur.room_id = sr.id
+        where tu.id = #{id}
+    </select>
+
+    <select id="getUserOfOther" resultMap="BaseResultMap">
+        select
+        <include refid="UserVO_List"/>
+        from tb_user tu
+        left join sys_user_room sur
+        on tu.id = sur.user_id
+        left join sys_room sr
+        on sur.room_id = sr.id
+        where tu.id = #{id}
+    </select>
+</mapper>

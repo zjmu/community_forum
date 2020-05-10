@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.module.room.mapper.RoomCheckMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.RoomCheck">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_room_id" jdbcType="BIGINT" property="userRoomId"/>
+        <result column="imgUrl" jdbcType="VARCHAR" property="imgurl"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_room_id, imgUrl, create_time, modify_time
+    </sql>
+
+    <insert id="insertMore">
+        insert into sys_room_check (user_room_id, imgUrl, create_time)
+        values
+        <foreach collection="roomChecks" item="item" separator=",">
+            (#{item.userRoomId,jdbcType=BIGINT}, #{item.imgurl,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+
+    <update id="updateRoomCheckResult">
+        update sys_user_room
+        set result = #{result,jdbcType=TINYINT},
+        status = #{status,jdbcType=TINYINT},
+        op_name = #{opName,jdbcType=VARCHAR},
+        op_code = #{opCode,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="listRoomCheckById" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_room_check
+        where user_room_id = #{id}
+    </select>
+
+</mapper>

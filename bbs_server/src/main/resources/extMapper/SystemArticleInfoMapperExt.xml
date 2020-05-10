@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.module.systemArticle.mapper.SystemArticleInfoMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.server.entity.SysArticleInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="manager_id" jdbcType="INTEGER" property="managerId"/>
+        <result column="article_code" jdbcType="VARCHAR" property="articleCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="view_num" jdbcType="INTEGER" property="viewNum"/>
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.jmu.server.vo.SystemArticleVO">
+        <result column="content" jdbcType="LONGVARCHAR" property="markdown"/>
+    </resultMap>
+    <resultMap id="SysArticleVO" type="com.jmu.server.vo.SysArticleVO">
+        <id column="id" jdbcType="VARCHAR" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="managerName"/>
+        <result column="manager_code" jdbcType="VARCHAR" property="managerCode"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="send_time" jdbcType="VARCHAR" property="sendTime"/>
+        <result column="view_num" jdbcType="VARCHAR" property="viewNum"/>
+        <result column="content" property="markdown"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        sai.id, sai.content, sm.name, sm.manager_code, sai.`status`, sai.title, sai.image, sai.view_num, sai.send_time,
+        sai.create_time
+    </sql>
+
+    <sql id="Blob_Column_List">
+        content
+    </sql>
+
+    <sql id="Cover_column_List">
+        id, title, image
+    </sql>
+
+    <update id="sendArticle">
+        update sys_article_info
+        set status = 1
+        where status = 2
+        and send_time <![CDATA[ < ]]> NOW()
+    </update>
+
+    <select id="getSystemArticleInfo" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Blob_Column_List"/>
+        from sys_article_info
+        where id = #{id,jdbcType=BIGINT}
+        and status = 1
+    </select>
+
+    <select id="listSystemArticleInfo" resultType="com.jmu.server.vo.SystemArticleVO">
+        select
+        <include refid="Cover_column_List"/>
+        from sys_article_info
+        where status = 1
+    </select>
+
+    <select id="listSysArticle" resultMap="SysArticleVO">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        sys_article_info sai
+        left join sys_manager sm
+        on sai.manager_id = sm.id
+        <where>
+            1 = 1
+            <if test=" opCode!= null">
+                and sm.manager_code like #{opCode} '%'
+            </if>
+            <if test=" status!= null">
+                and sai.status = #{status}
+            </if>
+            <if test="startTime!= null and endTime!= null">
+                and sai.send_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

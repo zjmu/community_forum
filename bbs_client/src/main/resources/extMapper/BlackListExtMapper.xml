@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jmu.client.module.blackList.mapper.BlackListExtMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.vo.BlackListVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="name" jdbcType="VARCHAR" property="userName"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="score" jdbcType="INTEGER" property="score"/>
+        <result column="leave_day" jdbcType="INTEGER" property="leaveDay"/>
+        <result column="op_id" jdbcType="BIGINT" property="opId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="select_colomn">
+        sbl.id as id, sbl.user_id as user_id, tu.name as name, tu.phone as phone, sbl.score as score, sbl.leave_day,
+        sbl.op_id as op_id, sbl.create_time as create_time
+    </sql>
+
+    <delete id="deleteByUserId">
+        delete
+        from sys_black_list
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteFromBlackList">
+        delete
+        from sys_black_list
+        where score <![CDATA[ >= ]]> #{score}
+    </delete>
+
+    <select id="selectByUserId" resultType="java.lang.Integer">
+        select count(*)
+        from sys_black_list
+        where user_id = #{userId}
+    </select>
+
+    <select id="listBlackListByConditions" resultMap="BaseResultMap">
+        select
+        <include refid="select_colomn"></include>
+        from sys_black_list sbl
+        left join tb_user tu on sbl.user_id = tu.id
+        <where>
+            1=1
+            <if test="name!= null">
+                and tu.name like '%' #{name} '%'
+            </if>
+            <if test="phone!= null">
+                and tu.phone like '%' #{phone} '%'
+            </if>
+            <if test="leaveDay!= null">
+                and sbl.leave_day <![CDATA[ < ]]> #{leaveDay}
+            </if>
+            <if test="startTime!= null and endTime!= null">
+                and create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+</mapper>

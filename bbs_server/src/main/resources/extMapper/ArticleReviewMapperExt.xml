@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.module.articleReview.mapper.ArticleReviewMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.server.entity.ArticleReview">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="op_code" jdbcType="VARCHAR" property="opCode"/>
+        <result column="op_name" jdbcType="VARCHAR" property="opName"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="result" jdbcType="VARCHAR" property="result"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <resultMap id="ArticleViewVOMap" type="com.jmu.server.vo.ArticleReviewVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="overhead" jdbcType="BIT" property="overhead"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="op_code" jdbcType="VARCHAR" property="opCode"/>
+        <result column="op_name" jdbcType="VARCHAR" property="opName"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="result" jdbcType="VARCHAR" property="result"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="time"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, article_id, op_code, op_name, user_id, `status`, `result`, create_time, modify_time
+    </sql>
+    <sql id="My_List">
+        ai.overhead as overhead, us.id as user_id, ar.id as id,ar.article_id as article_id, op_code, op_name,
+        us.nickname, us.phone,ar.status,`result`, ar.create_time
+    </sql>
+
+    <select id="listArticleReview" resultMap="ArticleViewVOMap">
+        select
+        <include refid="My_List"/>
+        from sys_article_review ar
+        left join tb_user us on ar.user_id = us.id
+    </select>
+
+    <select id="listByCondition" resultMap="ArticleViewVOMap">
+        select
+        <include refid="My_List"/>
+        from sys_article_review ar
+        left join tb_article_info ai on ar.article_id = ai.id
+        left join tb_user us on ar.user_id = us.id
+        <where>
+            1=1
+            <if test="articleCode!= null">
+                and ai.article_code like '%' #{articleCode} '%'
+            </if>
+            <if test="userId!= null">
+                and us.id = #{userId}
+            </if>
+            <if test=" status!= null">
+                and ar.status = #{status}
+            </if>
+            <if test=" startTime!= null and endTime != null ">
+                and ai.create_time between #{startTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByArticleId" resultType="Integer">
+        select count(*)
+        from sys_article_review
+        where article_id = #{articleId,jdbcType=BIGINT}
+    </select>
+
+</mapper>

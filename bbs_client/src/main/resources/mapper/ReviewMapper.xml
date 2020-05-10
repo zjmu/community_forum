@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.mapper.ReviewMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.Review">
+        <!--@mbg.generated-->
+        <!--@Table tb_review-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="review_code" jdbcType="VARCHAR" property="reviewCode"/>
+        <result column="type" jdbcType="TINYINT" property="type"/>
+        <result column="manager_id" jdbcType="INTEGER" property="managerId"/>
+        <result column="article_id" jdbcType="INTEGER" property="articleId"/>
+        <result column="is_review" jdbcType="BIT" property="isReview"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, review_code, `type`, manager_id, article_id, is_review, detail, `time`, modify_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        <!--@mbg.generated-->
+        select
+        <include refid="Base_Column_List"/>
+        from tb_review
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        <!--@mbg.generated-->
+        delete from tb_review
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.jmu.client.entity.Review">
+        <!--@mbg.generated-->
+        insert into tb_review (id, review_code, `type`,
+        manager_id, article_id, is_review,
+        detail, `time`, modify_time
+        )
+        values (#{id,jdbcType=BIGINT}, #{reviewCode,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT},
+        #{managerId,jdbcType=INTEGER}, #{articleId,jdbcType=INTEGER}, #{isReview,jdbcType=BIT},
+        #{detail,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.jmu.client.entity.Review">
+        <!--@mbg.generated-->
+        insert into tb_review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="reviewCode != null">
+                review_code,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="managerId != null">
+                manager_id,
+            </if>
+            <if test="articleId != null">
+                article_id,
+            </if>
+            <if test="isReview != null">
+                is_review,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="time != null">
+                `time`,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="reviewCode != null">
+                #{reviewCode,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="managerId != null">
+                #{managerId,jdbcType=INTEGER},
+            </if>
+            <if test="articleId != null">
+                #{articleId,jdbcType=INTEGER},
+            </if>
+            <if test="isReview != null">
+                #{isReview,jdbcType=BIT},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jmu.client.entity.Review">
+        <!--@mbg.generated-->
+        update tb_review
+        <set>
+            <if test="reviewCode != null">
+                review_code = #{reviewCode,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=TINYINT},
+            </if>
+            <if test="managerId != null">
+                manager_id = #{managerId,jdbcType=INTEGER},
+            </if>
+            <if test="articleId != null">
+                article_id = #{articleId,jdbcType=INTEGER},
+            </if>
+            <if test="isReview != null">
+                is_review = #{isReview,jdbcType=BIT},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                `time` = #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jmu.client.entity.Review">
+        <!--@mbg.generated-->
+        update tb_review
+        set review_code = #{reviewCode,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=TINYINT},
+        manager_id = #{managerId,jdbcType=INTEGER},
+        article_id = #{articleId,jdbcType=INTEGER},
+        is_review = #{isReview,jdbcType=BIT},
+        detail = #{detail,jdbcType=VARCHAR},
+        `time` = #{time,jdbcType=TIMESTAMP},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

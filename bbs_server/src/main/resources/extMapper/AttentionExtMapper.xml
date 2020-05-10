@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.module.attention.mapper.AttentionExtMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.server.entity.Attention">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="attention_user_id" jdbcType="BIGINT" property="attentionUserId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+
+    <resultMap id="attentionVOMap" type="com.jmu.server.vo.AttentionVO">
+        <result column="icon" property="icon"/>
+        <result column="nickname" property="nick"/>
+        <result column="user_id" property="userId"/>
+        <result column="signature" property="signature"/>
+        <result column="area" property="area"/>
+        <result column="room_code" property="roomCode"/>
+        <result column="unit" property="unit"/>
+        <result column="floor" property="floor"/>
+        <result column="building" property="building"/>
+        <result column="phone" property="phone"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, attention_user_id, create_time, modify_time
+    </sql>
+
+    <sql id="My_Column_List">
+        us.id as user_id ,us.icon,us.nickname,us.signature, us.phone,r.area,r.building,r.unit,r.floor,r.room_code
+    </sql>
+
+    <select id="selectAttention" resultType="java.lang.Integer">
+        select count(*)
+        from tb_attention
+        where user_id = #{userId}
+        and attention_user_id = #{attentionUserId}
+    </select>
+
+    <select id="getAttentionNum" resultType="java.lang.Integer">
+        select count(*)
+        from tb_attention ta
+        left join tb_user tu on ta.attention_user_id = tu.id
+        where ta.user_id = #{userId}
+        and tu.state = 0
+    </select>
+
+
+</mapper>

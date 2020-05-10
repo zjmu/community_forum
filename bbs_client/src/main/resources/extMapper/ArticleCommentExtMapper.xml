@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.module.articleComment.mapper.ArticleCommentExtMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.ArticleComment">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="nick" jdbcType="VARCHAR" property="nick"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="type" jdbcType="BIT" property="type"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, state, user_id, nick, article_id, parent_id, content, create_time
+    </sql>
+
+    <update id="updateNickByUserId">
+        update tb_article_comment
+        set nick = #{nick}
+        where user_id = #{userId}
+    </update>
+
+</mapper>

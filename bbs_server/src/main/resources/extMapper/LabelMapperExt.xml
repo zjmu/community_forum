@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.server.module.label.mapper.LabelMapperExt">
+    <resultMap id="BaseResultMap" type="com.jmu.server.entity.Label">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="op_id" jdbcType="BIGINT" property="opId"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="weight" jdbcType="INTEGER" property="weight"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <resultMap id="labelVOMap" type="com.jmu.server.vo.LabelVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="op_name" jdbcType="BIGINT" property="opName"/>
+        <result column="code" jdbcType="VARCHAR" property="code"/>
+        <result column="weight" jdbcType="INTEGER" property="weight"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        sl.id as id, sl.`label` as label, sm.name as op_name, sl.code as code, weight, sl.create_time, sl.state
+    </sql>
+
+    <select id="listLabel" resultMap="labelVOMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_label sl
+        left join sys_manager sm on sl.op_code = sm.manager_code
+        <where>
+            1=1
+            <if test="label!= null">
+                and label like '%' #{label} '%'
+            </if>
+            <if test="state!= null">
+                and sl.state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Long">
+        select id
+        from sys_label
+        <where>
+            1=1
+            <if test="label!= null">
+                and label = #{label}
+            </if>
+            <if test="code!= null">
+                and code = #{code}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

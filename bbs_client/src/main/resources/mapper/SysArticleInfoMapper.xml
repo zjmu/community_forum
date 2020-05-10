@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jmu.client.mapper.SysArticleInfoMapper">
+    <resultMap id="BaseResultMap" type="com.jmu.client.entity.SysArticleInfo">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="manager_id" jdbcType="INTEGER" property="managerId"/>
+        <result column="article_code" jdbcType="VARCHAR" property="articleCode"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="view_num" jdbcType="INTEGER" property="viewNum"/>
+        <result column="send_time" jdbcType="TIMESTAMP" property="sendTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.jmu.client.entity.SysArticleInfo">
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, manager_id, article_code, `status`, title, image, view_num, send_time, create_time,
+        modify_time
+    </sql>
+    <sql id="Blob_Column_List">
+        content
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from sys_article_info
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from sys_article_info
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.jmu.client.entity.SysArticleInfo"
+            useGeneratedKeys="true">
+        insert into sys_article_info (manager_id, article_code, `status`,
+        title, image, view_num,
+        send_time, create_time,
+        content)
+        values (#{managerId,jdbcType=INTEGER}, #{articleCode,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT},
+        #{title,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, #{viewNum,jdbcType=INTEGER},
+        #{sendTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},#{content,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.jmu.client.entity.SysArticleInfo" useGeneratedKeys="true">
+        insert into sys_article_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="managerId != null">
+                manager_id,
+            </if>
+            <if test="articleCode != null">
+                article_code,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="image != null">
+                image,
+            </if>
+            <if test="viewNum != null">
+                view_num,
+            </if>
+            <if test="sendTime != null">
+                send_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="managerId != null">
+                #{managerId,jdbcType=INTEGER},
+            </if>
+            <if test="articleCode != null">
+                #{articleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null">
+                #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="viewNum != null">
+                #{viewNum,jdbcType=INTEGER},
+            </if>
+            <if test="sendTime != null">
+                #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.jmu.client.entity.SysArticleInfo">
+        update sys_article_info
+        <set>
+            <if test="managerId != null">
+                manager_id = #{managerId,jdbcType=INTEGER},
+            </if>
+            <if test="articleCode != null">
+                article_code = #{articleCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="image != null">
+                image = #{image,jdbcType=VARCHAR},
+            </if>
+            <if test="viewNum != null">
+                view_num = #{viewNum,jdbcType=INTEGER},
+            </if>
+            <if test="sendTime != null">
+                send_time = #{sendTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.jmu.client.entity.SysArticleInfo">
+        update sys_article_info
+        set manager_id = #{managerId,jdbcType=INTEGER},
+        article_code = #{articleCode,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=TINYINT},
+        title = #{title,jdbcType=VARCHAR},
+        image = #{image,jdbcType=VARCHAR},
+        view_num = #{viewNum,jdbcType=INTEGER},
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+        content = #{content,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.jmu.client.entity.SysArticleInfo">
+        update sys_article_info
+        set manager_id = #{managerId,jdbcType=INTEGER},
+        article_code = #{articleCode,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=TINYINT},
+        title = #{title,jdbcType=VARCHAR},
+        image = #{image,jdbcType=VARCHAR},
+        view_num = #{viewNum,jdbcType=INTEGER},
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>
